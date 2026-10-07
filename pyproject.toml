@@ -1,0 +1,10 @@
+[project]
+name = "safe-ci-repair-agent"
+version = "0.1.0"
+requires-python = ">=3.11"
+
+[project.scripts]
+repair-agent = "repair_agent.cli:main"
+
+[tool.unittest]
+start-directory = "tests"

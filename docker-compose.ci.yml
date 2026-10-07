@@ -1,0 +1,23 @@
+# CI should invoke this service with a trusted image containing its runtime
+# profile and prebuilt dependencies. Source is read-only and work is tmpfs.
+services:
+  repair-agent:
+    build: .
+    network_mode: none
+    read_only: true
+    user: "10001:10001"
+    cap_drop: ["ALL"]
+    security_opt: ["no-new-privileges:true"]
+    pids_limit: 64
+    mem_limit: 512m
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=256m
+      - /work:rw,noexec,nosuid,size=256m
+    volumes:
+      - ${CHECKOUT:?set CHECKOUT}:/source:ro
+      - ${REQUEST:?set REQUEST}:/request/request.json:ro
+      - ${OUTPUT:?set OUTPUT}:/output:rw
+    environment:
+      HOME: /tmp/empty-home
+      PATH: /usr/local/bin:/usr/bin:/bin
+    command: ["run", "--request", "/request/request.json", "--source", "/source", "--output", "/output"]
